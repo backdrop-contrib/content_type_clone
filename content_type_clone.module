@@ -15,9 +15,8 @@
  *
  * @param string $node_type_prefix
  *   The default prefix defined for the new content type.
- *
  * @return int
- *   New occurence number.
+ *   New occurrence number.
  */
 function content_type_clone_get_next_type_number($node_type_prefix) {
   // Get node types.
@@ -40,7 +39,6 @@ function content_type_clone_get_next_type_number($node_type_prefix) {
  *
  * @param array $values
  *   Form values coming from the content type creation form.
- *
  * @return int
  *   Batch parameters.
  */
@@ -95,7 +93,7 @@ function content_type_clone_create($values) {
       // Add an operation.
       $operations[] = array(
         'content_type_clone_copy_node',
-        array($node, $values)
+        array($node, $values),
       );
     }
   }
@@ -116,26 +114,38 @@ function content_type_clone_create($values) {
 /**
  * Batch operation finished.
  *
- * This function displays a message after 
+ * This function displays a message after
  * the batch operation ends.
  *
- * @param boolean $success
+ * @param bool $success
  *   The batch status.
- *
  * @param array $results
  *   The batch results array.
- *
  * @param array $operations
  *   The batch operations array.
  */
 function content_type_clone_finished($success, $results, $operations) {
   // Test the results.
   if ($success) {
-    drupal_set_message(t('The "@source_name" content type, @field_count fields and @node_count nodes have been cloned successfully.', array('@source_name' => $results['source_name'], '@field_count' => $results['field_count'], '@node_count' => $results['node_count'])));
+    drupal_set_message(
+      t('The "@source_name" content type, @field_count fields and @node_count nodes have been cloned successfully.',
+        array('@source_name' => $results['source_name'],
+        '@field_count' => $results['field_count'],
+        '@node_count' => $results['node_count'],
+        )
+      )
+    );
   }
   else {
     $error_operation = reset($operations);
-    drupal_set_message(t('An error occurred while processing @operation with arguments : @args', array('@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))));
+    drupal_set_message(
+      t('An error occurred while processing @operation with arguments : @args', 
+        array(
+          '@operation' => $error_operation[0],
+          '@args' => print_r($error_operation[0], TRUE),
+        )
+      )
+    );
   }
 
   // Redirect to the content types list.
@@ -149,10 +159,8 @@ function content_type_clone_finished($success, $results, $operations) {
  *
  * @param object $source_node
  *   The node to clone.
- *
  * @param array $values
  *   Values from the content type clone form.
- *
  * @param array $context
  *   The batch operations context.
  */
@@ -207,10 +215,8 @@ function content_type_clone_copy_node($source_node, $values, &$context) {
  *
  * @param array $instance
  *   The newly created content type.
- *
  * @param string $field_name
  *   The name of the field in the source content type.
- *
  * @param array $values
  *   Form values coming from the content type creation form.
  */
