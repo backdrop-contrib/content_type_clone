@@ -450,7 +450,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
   // Token fields.
   if (module_exists('token')) {
     // Display the node title pattern field.
-    $default_value = t('Clone of') . ' [node:title]';
+    $default_value = t('Clone of [node:title]');
     $form['fieldset_3']['title_pattern'] = array(
       '#type' => 'textfield',
       '#title' => t('Node title pattern'),
@@ -469,7 +469,12 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
   }
   else {
     $form['fieldset_3']['token_tree'] = array(
-      '#markup' => '<p>' . t('Enable the <a href="@drupal-token">Token module</a> to view the available token browser.', array('@drupal-token' => 'http://drupal.org/project/token')) . '</p>',
+      '#markup' => '<p>' .
+      t('Enable the <a href="@drupal-token">Token module</a> to view the available token browser.',
+        array(
+          '@drupal-token' => 'http://drupal.org/project/token',
+        )
+      ) . '</p>'
     );
   }
 
