@@ -15,6 +15,7 @@
  *
  * @param string $node_type_prefix
  *   The default prefix defined for the new content type.
+ *
  * @return int
  *   New occurrence number.
  */
@@ -39,6 +40,7 @@ function content_type_clone_get_next_type_number($node_type_prefix) {
  *
  * @param array $values
  *   Form values coming from the content type creation form.
+ *
  * @return int
  *   Batch parameters.
  */
@@ -129,7 +131,8 @@ function content_type_clone_finished($success, $results, $operations) {
   if ($success) {
     drupal_set_message(
       t('The "@source_name" content type, @field_count fields and @node_count nodes have been cloned successfully.',
-        array('@source_name' => $results['source_name'],
+        array(
+          '@source_name' => $results['source_name'],
           '@field_count' => $results['field_count'],
           '@node_count' => $results['node_count'],
         )
@@ -155,7 +158,7 @@ function content_type_clone_finished($success, $results, $operations) {
 /**
  * Clone a node.
  *
- * This function copies a node from the 
+ * This function copies a node from the
  * source content type to the target content type.
  *
  * @param object $source_node
@@ -406,7 +409,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
   $form['fieldset_2']['target_name'] = array(
     '#type' => 'textfield',
     '#title' => t('Name'),
-    '#default_value' => t($default_value),
+    '#default_value' => $default_value,
     '#token' => FALSE,
     '#required' => TRUE,
   );
@@ -415,7 +418,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
   $form['fieldset_2']['target_machine_name'] = array(
     '#type' => 'textfield',
     '#title' => t('Machine name'),
-    '#default_value' => t($node_type_prefix . '_' . $num),
+    '#default_value' => $node_type_prefix . '_' . $num,
     '#required' => TRUE,
   );
 
@@ -447,7 +450,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
   // Token fields.
   if (module_exists('token')) {
     // Display the node title pattern field.
-    $default_value = t('Clone of') . ' ' . '[node:title]';
+    $default_value = t('Clone of') . ' [node:title]';
     $form['fieldset_3']['title_pattern'] = array(
       '#type' => 'textfield',
       '#title' => t('Node title pattern'),
