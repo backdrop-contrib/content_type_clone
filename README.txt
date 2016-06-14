@@ -57,16 +57,17 @@ After having installed and enabled the module, follow the steps below:
  2. Click on the "clone" list next to the content type you want to clone.
   
  3. In the form that will appear, provide a name, a machine name and 
-    a description (optional) for the new content type that is about to be created.
+    a description (optional) for the new content type 
+    that is about to be created.
    
- 4. Click "Generate". The cloned content type will then appear in the content type list
+ 4. Click "Generate". The cloned content type will then appear 
+    in the content type list.
 
 Cloning options:
-When cloning a content type, there are 2 self explanatory options in the creation form.
+When cloning a content type, there are 2 self explanatory options 
+in the creation form.
 
  * Copy all nodes from the source content type to the target content type
  	
- * Delete all nodes from the source content type after they have been copied to the target content type
-
-
-
+ * Delete all nodes from the source content type after 
+   they have been copied to the target content type
