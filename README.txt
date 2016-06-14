@@ -15,7 +15,7 @@ INTRODUCTION
 ------------
 
 Content Type Clone alows users with the "Administer content types" permission 
-to clone content types in one click
+to clone content types in one click.
    
    
 REQUIREMENTS
