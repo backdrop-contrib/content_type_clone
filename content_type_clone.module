@@ -79,7 +79,10 @@ function content_type_clone_create($values) {
 
   // Create new fields.
   foreach ($all_fields as $name => $instance) {
-    $operations[] = array('content_type_clone_set_target_field', array($instance, $name, $values));
+    $operations[] = array(
+      'content_type_clone_set_target_field',
+      array($instance, $name, $values),
+    );
   }
 
   // Also clone the nodes if requested.
@@ -90,7 +93,10 @@ function content_type_clone_create($values) {
     // Loop through each node.
     foreach ($nodes as $node) {
       // Add an operation.
-      $operations[] = array('content_type_clone_copy_node', array($node, $values));
+      $operations[] = array(
+        'content_type_clone_copy_node',
+        array($node, $values)
+      );
     }
   }
 
@@ -108,7 +114,7 @@ function content_type_clone_create($values) {
 }
 
 /**
- * Batch operation finished
+ * Batch operation finished.
  *
  * This function displays a message after 
  * the batch operation ends.
@@ -137,7 +143,7 @@ function content_type_clone_finished($success, $results, $operations) {
 }
 
 /**
- * Clone a node
+ * Clone a node.
  *
  * This function copies a node from the source content type to the target content type.
  *
@@ -245,7 +251,7 @@ function content_type_clone_set_target_field($instance, $field_name, $values, &$
 }
 
 /**
- * Redirect to the content type clone form
+ * Redirect to the content type clone form.
  *
  * This function redirects the user to the content type clone form.
  *
@@ -276,9 +282,6 @@ function _content_type_clone_get_http_requests() {
 
 /**
  * Implements hook_preprocess_html().
- *
- * @param array $variables
- *   The array of loaded variables.
  */
 function content_type_clone_preprocess_html(&$variables) {
   // Add css if required.
@@ -289,9 +292,6 @@ function content_type_clone_preprocess_html(&$variables) {
 
 /**
  * Implements hook_menu().
- *
- * @return array
- *   Array of menu items.
  */
 function content_type_clone_menu() {
   // Content type clone form url.
@@ -315,9 +315,6 @@ function content_type_clone_menu() {
 
 /**
  * Implements hook_page_alter().
- *
- * @param array $page
- *   The array of page parameters.
  */
 function content_type_clone_page_alter(&$page) {
   if ($_GET['q'] == 'admin/structure/types') {
@@ -344,18 +341,6 @@ function content_type_clone_page_alter(&$page) {
 
 /**
  * Implements hook_form().
- *
- * @param array $form
- *   The array of form fields.
- *
- * @param array $form_state
- *   The array for the form state.
- *
- * @param string $machine_name
- *   Machine name of the source content type.
- *
- * @return array
- *   Built form parameters.
  */
 function content_type_clone_create_form($form, &$form_state, $machine_name) {
   // Load the node type from machine name.
@@ -490,12 +475,6 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
 
 /**
  * Implements hook_form_validate().
- *
- * @param array $form
- *   The array of form fields.
- *
- * @param array $form_state
- *   The array for the form state.
  */
 function content_type_clone_create_form_validate($form, &$form_state) {
   if ($form['#form_id'] == 'content_type_clone_create_form') {
@@ -514,12 +493,6 @@ function content_type_clone_create_form_validate($form, &$form_state) {
 
 /**
  * Implements hook_form_submit().
- *
- * @param array $form
- *   The array of form fields.
- *
- * @param array $form_state
- *   The array for the form state.
  */
  function content_type_clone_create_form_submit($form, &$form_state) {
   if ($form['#form_id'] == 'content_type_clone_create_form') {
