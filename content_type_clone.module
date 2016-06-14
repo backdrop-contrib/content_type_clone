@@ -474,7 +474,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
         array(
           '@drupal-token' => 'http://drupal.org/project/token',
         )
-      ) . '</p>'
+      ) . '</p>',
     );
   }
 
