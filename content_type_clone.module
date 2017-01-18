@@ -13,21 +13,21 @@
  * The clone number is based on the number of existing clones
  * for the content type being cloned.
  *
- * @param $node_type_prefix
+ * @param string $node_type_prefix
  *   The default prefix defined for the new content type.
  */
 function content_type_clone_get_next_type_number($node_type_prefix) {
-  //get node types
+  // Get node types.
   $node_types = array_keys(node_type_get_types());
 
-  //prepare the search pattern
+  // Prepare the search pattern.
   $pattern = '/^' . $node_type_prefix . '/';
 
-  //count existing prefix occurences
-  $occurences  = count(preg_grep($pattern, $node_types));
+  // Count existing prefix occurrences.
+  $occurrences  = count(preg_grep($pattern, $node_types));
 
-  //return an incremented value
-  return $occurences + 1;
+  // Return an incremented value.
+  return $occurrences + 1;
 }
 
 /**
@@ -35,60 +35,69 @@ function content_type_clone_get_next_type_number($node_type_prefix) {
  *
  * This function creates the new content type and adds the cloned fields.
  *
- * @param $values
+ * @param array $values
  *   Form values coming from the content type creation form.
  */
 function content_type_clone_create($values) {
-  //create the type definition array.
+  // Create the type definition array.
   $type = array(
   'type' => $values['target_machine_name'],
-  'name' => t($values['target_name']),
+  'name' => $values['target_name'],
   'base' => 'node_content',
-  'description' => t($values['target_description']),
+  'description' => $values['target_description'],
   'custom' => 1,
   'modified' => 1,
-  'locked' => 0
+  'locked' => 0,
   );
 
-  //set the type defaults
+  // Set the type defaults.
   $type = node_type_set_defaults($type);
 
-  //save the ndoe type
+  // Save the ndoe type.
   node_type_save($type);
 
-  //add body field
+  // Add body field.
   node_add_body_field($type);
 
-  //prepare the operations array
+  // Prepare the operations array.
   $operations = array();
 
-  //get node type base fields
+  // Get node type base fields.
   $base_fields = field_info_instances('node', $values['source_machine_name']);
 
-  //get node type extra fields
+  // Get node type extra fields.
   $extra_fields = field_info_extra_fields('node', $values['source_machine_name'], 'form');
 
-  //merge all fields
+  // Merge all fields.
   $all_fields = array_merge($base_fields, $extra_fields);
 
   //create new fields
   foreach ($all_fields as $name => $instance) {
-    $operations[] = array('content_type_clone_set_target_field', array($instance, $name, $values));
+    $operations[] = array(
+    'content_type_clone_set_target_field',
+    array($instance, $name, $values),
+    );
   }
 
-  //also clone the nodes if requested
+  // Also clone the nodes if requested.
   if ((int) $values['clone_source_nodes'] == 1) {
     //load all nodes for the source content type
-    $nodes = node_load_multiple(array(), array('type' => $values['source_machine_name']));
+    $nodes = node_load_multiple(
+    array(),
+    array('type' => $values['source_machine_name']),
+    );
 
-    //loop through each node
+    // Loop through each node.
     foreach ($nodes as $node) {
       //add an operation
-      $operations[] = array('content_type_clone_copy_node', array($node, $values));
+      $operations[] = array(
+      'content_type_clone_copy_node',
+      array($node, $values),
+      );
     }
   }
 
-  //define batch operation
+  // Define batch operation.
   $batch = array(
   'title' => t('Clone content type'),
   'operations' => $operations,
@@ -106,18 +115,18 @@ function content_type_clone_create($values) {
  *
  * This function displays a message after the batch operation ends.
  *
- * @param $success
+ * @param bool $success
  *   The batch status.
  *
- * @param $results
+ * @param array $results
  *   The batch results array.
  *
- * @param $operations
+ * @param array $operations
  *   The batch operations array.
  */
 function content_type_clone_finished($success, $results, $operations) {
 
-  // Test the results
+  // Test the results.
   if ($success) {
     drupal_set_message(t('The "@source_name" content type and @field_count fields have been cloned successfully.', array('@source_name' => $results['source_name'], '@field_count' => $results['field_count'])));
   }
@@ -126,7 +135,7 @@ function content_type_clone_finished($success, $results, $operations) {
     drupal_set_message(t('An error occurred while processing @operation with arguments : @args', array('@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))));
   }
 
-  //redirect to the content types list
+  // Redirect to the content types list.
   drupal_goto('/admin/structure/types');
 }
 
@@ -135,40 +144,40 @@ function content_type_clone_finished($success, $results, $operations) {
  *
  * This function copies a node from the source content type to the target content type.
  *
- * @param $source_node
+ * @param object $source_node
  *   The node to clone.
  *
- * @param $values
+ * @param array $values
  *   Values from the content type clone form.
  *
- * @param $context
+ * @param array $context
  *   The batch operations context.
  */
 function content_type_clone_copy_node($source_node, $values, &$context) {
-  //slow down the process for visibility
+  // Slow down the process for visibility.
   sleep(0.5);
 
-  //progress context results
+  // Progress context results.
   $context['results'][] = 'nid' . $source_node->nid;
 
-  //update the node count
+  // Update the node count.
   $context['results']['node_count']++;
 
-  //progress context message
+  // Progress context message.
   $context['message'] = t('Cloning node') . ' ' . $source_node->title;
 
-  //copy the source node
+  // Copy the source node.
   $target_node = clone $source_node;
 
-  //unset version and node id's
+  // Unset version and node id's.
   unset($target_node->nid);
   unset($target_node->vid);
   unset($target_node->path);
 
-  //set target node type
+  // Set target node type.
   $target_node->type = $values['target_machine_name'];
 
-  //set the target node title
+  // Set the target node title.
   if (module_exists('token')) {
     $target_node->title = token_replace($values['title_pattern'], array('node' => $target_node));
   }
@@ -176,15 +185,15 @@ function content_type_clone_copy_node($source_node, $values, &$context) {
     $target_node->title = t('Clone of') . ' ' . $source_node->title;
   }
 
-  //save the copy
+  // Save the copy.
   node_save($target_node);
 
-  //delete the source node if required
+  // Delete the source node if required.
   if ((int) $values['delete_source_nodes'] == 1) {
     node_delete($source_node->nid);
   }
 
-  //update progress
+  // Update progress.
   _content_type_clone_update_http_requests();
 }
 
@@ -193,32 +202,32 @@ function content_type_clone_copy_node($source_node, $values, &$context) {
  *
  * This function creates a field for a cloned content type.
  *
- * @param $instance
+ * @param object $instance
  *   The newly created content type.
  *
- * @param $field_name
+ * @param string $field_name
  *   The name of the field in the source content type.
  *
- * @param $values
+ * @param array $values
  *   Form values coming from the content type creation form.
  */
 function content_type_clone_set_target_field($instance, $field_name, $values, &$context) {
-  //slow down the progress for visibility
+  // Slow down the progress for visibility.
   sleep(0.5);
 
-  //progress context results
+  // Progress context results.
   $context['results'][] = $field_name;
 
-  //pass the cloned content type name to context
+  // Pass the cloned content type name to context.
   $context['results']['source_name'] = $values['source_name'];
 
-  //update the field count
+  // Update the field count.
   $context['results']['field_count']++;
 
-  //progress context message
+  // Progress context message.
   $context['message'] = t('Cloning field') . ' ' . $field_name;
 
-  //verify the field does not already exist.
+  // Verify the field does not already exist.
   if ($field_name != 'body' && $field_name != 'title') {
     //if field doesn't exist, create
     if (!field_info_field($field_name)) {
@@ -226,15 +235,15 @@ function content_type_clone_set_target_field($instance, $field_name, $values, &$
       $field = field_create_field($field);
     }
 
-    //set the new bundle name
+    // Set the new bundle name.
     $instance['bundle'] = $values['target_machine_name'];
     $instance['field_name'] = $field_name;
 
-    //create an instance of the field and bind it to the bundle.
+    // Create an instance of the field and bind it to the bundle.
     field_create_instance($instance);
   }
 
-  //update progress
+  // Update progress.
   _content_type_clone_update_http_requests();
 }
 
@@ -243,11 +252,11 @@ function content_type_clone_set_target_field($instance, $field_name, $values, &$
  *
  * This function redirects the user to the content type clone form.
  *
- * @param $node_type
+ * @param string $node_type
  *   The node type needing cloning.
  */
 function content_type_clone_menu_redirect($node_type) {
-  //redirect the user
+  // Redirect the user.
   drupal_goto('admin/' . $node_type->type . '/clone/create');
 }
 
@@ -324,7 +333,7 @@ function content_type_clone_node_overview_types() {
  * Implements hook_preprocess_html().
  */
 function content_type_clone_preprocess_html(&$variables) {
-  //add css if required
+  // Add css if required.
   if (arg(0) == 'admin' && arg(2) == 'clone' && arg(3) == 'create') {
     drupal_add_css(drupal_get_path('module', 'content_type_clone') . '/css/admin.css', array('group' => CSS_THEME, 'type' => 'file'));
   }
@@ -334,7 +343,7 @@ function content_type_clone_preprocess_html(&$variables) {
  * Implements hook_menu().
  */
 function content_type_clone_menu() {
-  //content type clone form url
+  // Content type clone form url.
   $items['admin/%/clone/create'] = array(
   'title' => '',
   'access arguments' => array('administer content types'),
@@ -364,16 +373,16 @@ function content_type_clone_menu_alter(&$items) {
  * Implements hook_form().
  */
 function content_type_clone_create_form($form, &$form_state, $machine_name) {
-  //load the node type from machine name
+  // Load the node type from machine name.
   $node_type = node_type_load($machine_name);
 
-  //prepare the new node type machine name prefix
+  // Prepare the new node type machine name prefix.
   $node_type_prefix = $node_type->type . '_clone';
 
-  //get the next occurence count
+  // Get the next occurrence count.
   $num = content_type_clone_get_next_type_number($node_type_prefix);
 
-  //source fieldset
+  // Source fieldset.
   $form['fieldset_1'] = array(
   '#type' => 'fieldset',
   '#title' => t('Content type source'),
@@ -381,7 +390,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
   '#collapsed' => TRUE,
   );
 
-  //source node type name field
+  // Source node type name field.
   $form['fieldset_1']['source_name'] = array(
   '#type' => 'textfield',
   '#title' => t('Name'),
@@ -390,7 +399,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
   '#attributes' => array('readonly' => 'readonly', 'class' => array('ctc-readonly'))
   );
 
-  //source node type machine name field
+  // Source node type machine name field.
   $form['fieldset_1']['source_machine_name'] = array(
   '#type' => 'textfield',
   '#title' => t('Machine name'),
@@ -399,7 +408,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
   '#attributes' => array('readonly' => 'readonly', 'class' => array('ctc-readonly'))
   );
 
-  //source node type description field
+  // Source node type description field.
   $form['fieldset_1']['source_description'] = array(
   '#type' => 'textarea',
   '#title' => t('Description'),
@@ -407,7 +416,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
   '#attributes' => array('readonly' => 'readonly', 'class' => array('ctc-readonly'))
   );
 
-  //target fieldset
+  // Target fieldset.
   $form['fieldset_2'] = array(
   '#type' => 'fieldset',
   '#title' => t('Content type target'),
@@ -415,7 +424,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
   '#collapsed' => FALSE
   );
 
-  //target node type name field
+  // Target node type name field.
   $default_value = 'Clone of' . ' ' . $node_type->name . ' (' . $num . ')';
   $form['fieldset_2']['target_name'] = array(
   '#type' => 'textfield',
@@ -425,7 +434,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
   '#required' => TRUE
   );
 
-  //target type machine name field
+  // Target type machine name field.
   $form['fieldset_2']['target_machine_name'] = array(
   '#type' => 'textfield',
   '#title' => t('Machine name'),
@@ -433,7 +442,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
   '#required' => TRUE
   );
 
-  //source node type description field
+  // Source node type description field.
   $form['fieldset_2']['target_description'] = array(
   '#type' => 'textarea',
   '#title' => t('Description'),
@@ -450,7 +459,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
   '#title' => t('Delete all nodes from the source content type after they have been copied to the target content type')
   );
 
-  //token fieldset
+  // Token fieldset.
   $form['fieldset_3'] = array(
   '#type' => 'fieldset',
   '#title' => t('Replacement patterns'),
@@ -458,7 +467,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
   '#collapsed' => TRUE
   );
 
-  //token fields
+  // Token fields.
   if (module_exists('token')) {
     //display the node title pattern field
     $default_value = t('Clone of') . ' ' . '[node:title]';
@@ -470,7 +479,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
     '#required' => TRUE
     );
 
-    //list available tokens
+    // List available tokens.
     $form['fieldset_3']['token_tree_link'] = array(
     '#theme' => 'token_tree',
     '#token_types' => array('node'),
@@ -484,13 +493,13 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
     );
   }
 
-  //submit button
+  // Submit button.
   $form['submit'] = array(
   '#type' => 'submit',
   '#value' => t('Generate')
   );
 
-  //return the form
+  // Return the form.
   return $form;
 }
 
@@ -499,15 +508,15 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
  */
 function content_type_clone_create_form_validate($form, &$form_state) {
   if ($form['#form_id'] == 'content_type_clone_create_form') {
-    //get node types
+    // Get node types.
     $node_types = array_keys(node_type_get_types());
 
-    //if the machine name already exists
+    // If the machine name already exists.
     if (in_array($form_state['values']['target_machine_name'], $node_types)) {
       form_set_error('target_machine_name', t('The content type name provided already exists'));
     }
 
-    //add the custom form submit handler
+    // Add the custom form submit handler.
     $form['#submit'][] = 'content_type_clone_create_form_submit';
   }
 }
@@ -517,13 +526,13 @@ function content_type_clone_create_form_validate($form, &$form_state) {
  */
 function content_type_clone_create_form_submit($form, &$form_state) {
   if ($form['#form_id'] == 'content_type_clone_create_form') {
-    //batch function name
+    // Batch function name.
     $function = 'content_type_clone_create';
 
-    //reset counter for debug information.
+    // Reset counter for debug information.
     $_SESSION['http_request_count'] = 0;
 
-    //execute the function batch function.
+    // Execute the function batch function.
     $batch = $function($form_state['values']);
     batch_set($batch);
   }
