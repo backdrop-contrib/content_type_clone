@@ -85,7 +85,7 @@ function content_type_clone_create(array $values) {
     // Load all nodes for the source content type.
     $nodes = node_load_multiple(
       array(),
-      array('type' => $values['source_machine_name']),
+      array('type' => $values['source_machine_name'])
     );
 
     // Loop through each node.
@@ -356,7 +356,7 @@ function content_type_clone_node_overview_types() {
           'data' => l(
             t('delete'),
             'admin/structure/types/manage/' . $type_url_str . '/delete'
-            ),
+          ),
         );
       }
       else {
@@ -368,8 +368,8 @@ function content_type_clone_node_overview_types() {
         'data' => l(
           t('clone'),
           'admin/' . $type_url_str . '/clone/create'
-          ),
-        );
+        ),
+      );
 
       $rows[] = $row;
     }
@@ -405,14 +405,14 @@ function content_type_clone_menu() {
     'access arguments' => array('administer content types'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('content_type_clone_create_form', 1),
-    'type' => MENU_CALLBACK
+    'type' => MENU_CALLBACK,
   );
 
   $items['admin/structure/types/manage/%node_type/clone'] = array(
     'title' => 'Clone',
     'access arguments' => array('administer content types'),
     'page callback' => 'content_type_clone_menu_redirect',
-    'page arguments' => array(4)
+    'page arguments' => array(4),
   );
 
   return $items;
@@ -535,7 +535,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
   // Token fields.
   if (module_exists('token')) {
     // Display the node title pattern field.
-    $default_value = t('Clone of') . ' [node:title]';
+    $default_value = t('Clone of @title', array('@title' => '[node:title]'));
     $form['fieldset_3']['title_pattern'] = array(
       '#type' => 'textfield',
       '#title' => t('Node title pattern'),
@@ -606,4 +606,3 @@ function content_type_clone_create_form_submit($form, &$form_state) {
     batch_set($batch);
   }
 }
-
