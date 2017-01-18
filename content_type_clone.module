@@ -600,4 +600,3 @@ function content_type_clone_create_form_submit($form, &$form_state) {
     batch_set($batch);
   }
 }
-
