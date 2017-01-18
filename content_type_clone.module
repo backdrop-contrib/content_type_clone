@@ -72,28 +72,28 @@ function content_type_clone_create(array $values) {
   // Merge all fields.
   $all_fields = array_merge($base_fields, $extra_fields);
 
-  //create new fields
+  // Create new fields.
   foreach ($all_fields as $name => $instance) {
     $operations[] = array(
-    'content_type_clone_set_target_field',
-    array($instance, $name, $values),
+      'content_type_clone_set_target_field',
+      array($instance, $name, $values),
     );
   }
 
   // Also clone the nodes if requested.
   if ((int) $values['clone_source_nodes'] == 1) {
-    //load all nodes for the source content type
+    // Load all nodes for the source content type.
     $nodes = node_load_multiple(
-    array(),
-    array('type' => $values['source_machine_name']),
+      array(),
+      array('type' => $values['source_machine_name']),
     );
 
     // Loop through each node.
     foreach ($nodes as $node) {
       // Add an operation
       $operations[] = array(
-      'content_type_clone_copy_node',
-      array($node, $values),
+        'content_type_clone_copy_node',
+        array($node, $values),
       );
     }
   }
@@ -129,11 +129,27 @@ function content_type_clone_finished($success, array $results, array $operations
 
   // Test the results.
   if ($success) {
-    drupal_set_message(t('The "@source_name" content type and @field_count fields have been cloned successfully.', array('@source_name' => $results['source_name'], '@field_count' => $results['field_count'])));
+    drupal_set_message(
+      t(
+        'The "@source_name" content type and @field_count fields have been cloned successfully.',
+        array(
+          '@source_name' => $results['source_name'],
+          '@field_count' => $results['field_count']
+        )
+      )
+    );
   }
   else {
     $error_operation = reset($operations);
-    drupal_set_message(t('An error occurred while processing @operation with arguments : @args', array('@operation' => $error_operation[0], '@args' => print_r($error_operation[0], TRUE))));
+    drupal_set_message(
+      t(
+        'An error occurred while processing @operation with arguments : @args',
+        array(
+          '@operation' => $error_operation[0],
+          '@args' => print_r($error_operation[0], TRUE)
+        )
+      )
+    );
   }
 
   // Redirect to the content types list.
@@ -230,7 +246,7 @@ function content_type_clone_set_target_field($instance, $field_name, $values, ar
 
   // Verify the field does not already exist.
   if ($field_name != 'body' && $field_name != 'title') {
-    //if field doesn't exist, create
+    // If field doesn't exist, create it.
     if (!field_info_field($field_name)) {
       $field = field_info_field($field_name);
       $field = field_create_field($field);
@@ -285,36 +301,74 @@ function content_type_clone_node_overview_types() {
   $types = node_type_get_types();
   $names = node_type_get_names();
   $field_ui = module_exists('field_ui');
-  $header = array(t('Name'), array('data' => t('Operations'), 'colspan' => $field_ui ? '5' : '3'));
+  $header = array(
+    t('Name'),
+    array(
+      'data' => t('Operations'),
+      'colspan' => $field_ui ? '5' : '3',
+    )
+  );
   $rows = array();
 
   foreach ($names as $key => $name) {
     $type = $types[$key];
     if (node_hook($type->type, 'form')) {
       $type_url_str = str_replace('_', '-', $type->type);
-      $row = array(theme('node_admin_overview', array('name' => $name, 'type' => $type)));
+      $row = array(
+        theme(
+          'node_admin_overview',
+          array(
+            'name' => $name,
+            'type' => $type,
+          )
+        )
+      );
 
       // Set the edit column.
-      $row[] = array('data' => l(t('edit'), 'admin/structure/types/manage/' . $type_url_str));
+      $row[] = array(
+        'data' => l(
+          t('edit'),
+          'admin/structure/types/manage/' . $type_url_str
+        ),
+      );
 
       if ($field_ui) {
         // Manage fields.
-        $row[] = array('data' => l(t('manage fields'), 'admin/structure/types/manage/' . $type_url_str . '/fields'));
+        $row[] = array(
+          'data' => l(
+            t('manage fields'),
+            'admin/structure/types/manage/' . $type_url_str . '/fields'),
+        );
 
         // Display fields.
-        $row[] = array('data' => l(t('manage display'), 'admin/structure/types/manage/' . $type_url_str . '/display'));
+        $row[] = array(
+          'data' => l(
+            t('manage display'),
+            'admin/structure/types/manage/' . $type_url_str . '/display'
+          )
+        );
       }
 
       // Set the delete column.
       if ($type->custom) {
-        $row[] = array('data' => l(t('delete'), 'admin/structure/types/manage/' . $type_url_str . '/delete'));
+        $row[] = array(
+          'data' => l(
+            t('delete'),
+            'admin/structure/types/manage/' . $type_url_str . '/delete'
+            )
+        );
       }
       else {
         $row[] = array('data' => '');
       }
 
-      // Set the clone column
-      $row[] = array('data' => l(t('clone'), 'admin/' . $type_url_str . '/clone/create'));
+      // Set the clone column.
+      $row[] = array(
+        'data' => l(
+          t('clone'),
+          'admin/' . $type_url_str . '/clone/create'
+          )
+        );
 
       $rows[] = $row;
     }
@@ -397,7 +451,10 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
     '#title' => t('Name'),
     '#default_value' => $node_type->name,
     '#required' => TRUE,
-    '#attributes' => array('readonly' => 'readonly', 'class' => array('ctc-readonly'))
+    '#attributes' => array(
+      'readonly' => 'readonly',
+      'class' => array('ctc-readonly'),
+    ),
   );
 
   // Source node type machine name field.
@@ -406,7 +463,10 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
     '#title' => t('Machine name'),
     '#default_value' => $node_type->type,
     '#required' => TRUE,
-    '#attributes' => array('readonly' => 'readonly', 'class' => array('ctc-readonly'))
+    '#attributes' => array(
+      'readonly' => 'readonly',
+      'class' => array('ctc-readonly'),
+    ),
   );
 
   // Source node type description field.
@@ -414,7 +474,10 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
     '#type' => 'textarea',
     '#title' => t('Description'),
     '#default_value' => $node_type->description,
-    '#attributes' => array('readonly' => 'readonly', 'class' => array('ctc-readonly'))
+    '#attributes' => array(
+      'readonly' => 'readonly',
+      'class' => array('ctc-readonly')
+    ),
   );
 
   // Target fieldset.
@@ -422,7 +485,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
     '#type' => 'fieldset',
     '#title' => t('Content type target'),
     '#collapsible' => FALSE,
-    '#collapsed' => FALSE
+    '#collapsed' => FALSE,
   );
 
   // Target node type name field.
@@ -432,7 +495,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
     '#title' => t('Name'),
     '#default_value' => t($default_value),
     '#token' => FALSE,
-    '#required' => TRUE
+    '#required' => TRUE,
   );
 
   // Target type machine name field.
@@ -440,24 +503,24 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
     '#type' => 'textfield',
     '#title' => t('Machine name'),
     '#default_value' => t($node_type_prefix . '_' . $num),
-    '#required' => TRUE
+    '#required' => TRUE,
   );
 
   // Source node type description field.
   $form['fieldset_2']['target_description'] = array(
     '#type' => 'textarea',
     '#title' => t('Description'),
-    '#default_value' => t('Description of') . ' ' . $node_type->name . ' (' . $num . ')'
+    '#default_value' => t('Description of') . ' ' . $node_type->name . ' (' . $num . ')',
   );
 
   $form['fieldset_2']['clone_source_nodes'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Copy all nodes from the source content type to the target content type')
+    '#title' => t('Copy all nodes from the source content type to the target content type'),
   );
 
   $form['fieldset_2']['delete_source_nodes'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Delete all nodes from the source content type after they have been copied to the target content type')
+    '#title' => t('Delete all nodes from the source content type after they have been copied to the target content type'),
   );
 
   // Token fieldset.
@@ -465,19 +528,19 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
     '#type' => 'fieldset',
     '#title' => t('Replacement patterns'),
     '#collapsible' => TRUE,
-    '#collapsed' => TRUE
+    '#collapsed' => TRUE,
   );
 
   // Token fields.
   if (module_exists('token')) {
-    //display the node title pattern field
+    //Display the node title pattern field.
     $default_value = t('Clone of') . ' ' . '[node:title]';
     $form['fieldset_3']['title_pattern'] = array(
       '#type' => 'textfield',
       '#title' => t('Node title pattern'),
       '#default_value' => $default_value,
       '#token' => FALSE,
-      '#required' => TRUE
+      '#required' => TRUE,
     );
 
     // List available tokens.
@@ -485,19 +548,23 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
       '#theme' => 'token_tree',
       '#token_types' => array('node'),
       '#global_types' => TRUE,
-      '#click_insert' => TRUE
+      '#click_insert' => TRUE,
     );
   }
   else {
     $form['fieldset_3']['token_tree'] = array(
-      '#markup' => '<p>' . t('Enable the <a href="@drupal-token">Token module</a> to view the available token browser.', array('@drupal-token' => 'http://drupal.org/project/token')) . '</p>',
+      '#markup' => '<p>' . t('Enable the <a href="@drupal-token">Token module</a> to view the available token browser.',
+        array(
+          '@drupal-token' => 'http://drupal.org/project/token',
+        )
+      ) . '</p>',
     );
   }
 
   // Submit button.
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Generate')
+    '#value' => t('Generate'),
   );
 
   // Return the form.
