@@ -117,7 +117,7 @@ function content_type_clone_create($values) {
  */
 function content_type_clone_finished($success, $results, $operations) {
 
-  // Test the results
+  //test the results
   if ($success) {
     drupal_set_message(t('The "@source_name" content type and @field_count fields have been cloned successfully.', array('@source_name' => $results['source_name'], '@field_count' => $results['field_count'])));
   }
@@ -269,58 +269,6 @@ function _content_type_clone_get_http_requests() {
 }
 
 /**
- * Reimplements the content type list table, addding a clone link.
- */
-function content_type_clone_node_overview_types() {
-  $types = node_type_get_types();
-  $names = node_type_get_names();
-  $field_ui = module_exists('field_ui');
-  $header = array(t('Name'), array('data' => t('Operations'), 'colspan' => $field_ui ? '5' : '3'));
-  $rows = array();
-
-  foreach ($names as $key => $name) {
-    $type = $types[$key];
-    if (node_hook($type->type, 'form')) {
-      $type_url_str = str_replace('_', '-', $type->type);
-      $row = array(theme('node_admin_overview', array('name' => $name, 'type' => $type)));
-
-      // Set the edit column.
-      $row[] = array('data' => l(t('edit'), 'admin/structure/types/manage/' . $type_url_str));
-
-      if ($field_ui) {
-        // Manage fields.
-        $row[] = array('data' => l(t('manage fields'), 'admin/structure/types/manage/' . $type_url_str . '/fields'));
-
-        // Display fields.
-        $row[] = array('data' => l(t('manage display'), 'admin/structure/types/manage/' . $type_url_str . '/display'));
-      }
-
-      // Set the delete column.
-      if ($type->custom) {
-        $row[] = array('data' => l(t('delete'), 'admin/structure/types/manage/' . $type_url_str . '/delete'));
-      }
-      else {
-        $row[] = array('data' => '');
-      }
-
-      // Set the clone column
-      $row[] = array('data' => l(t('clone'), 'admin/' . $type_url_str . '/clone/create'));
-
-      $rows[] = $row;
-    }
-  }
-
-  $build['node_table'] = array(
-    '#theme' => 'table',
-    '#header' => $header,
-    '#rows' => $rows,
-    '#empty' => t('No content types available. <a href="@link">Add content type</a>.', array('@link' => url('admin/structure/types/add'))),
-  );
-
-  return $build;
-}
-
-/**
  * Implements hook_preprocess_html().
  */
 function content_type_clone_preprocess_html(&$variables) {
@@ -354,10 +302,29 @@ function content_type_clone_menu() {
 }
 
 /**
- * Implements hook_menu_alter().
+ * Implements hook_page_alter().
  */
-function content_type_clone_menu_alter(&$items) {
-  $items['admin/structure/types']['page callback'] = 'content_type_clone_node_overview_types';
+function content_type_clone_page_alter(&$page) {
+  if ($_GET['q'] == 'admin/structure/types') {
+    //increment the node types list table colspan for the new link
+    $page['content']['system_main']['node_table']['#header'][1]['colspan']++;
+
+    //loop through all node types found in the list
+    foreach ($page['content']['system_main']['node_table']['#rows'] as $key => &$row) {
+      //get the edit link of the content type
+      $str = $row[1]['data'];
+
+      //find the machine name
+      preg_match('/admin\/structure\/types\/manage\/([a-zA-Z0-9_-]+)/', $str, $match);
+
+      //if machine name is found
+      if (isset($match[1])) {
+        $machine_name = str_replace(' ', '', $match[1]);
+        //add link
+        $row[] = l(t('clone'), 'admin/' . $machine_name . '/clone/create');
+      }
+    }
+  }
 }
 
 /**
@@ -523,7 +490,7 @@ function content_type_clone_create_form_submit($form, &$form_state) {
     //reset counter for debug information.
     $_SESSION['http_request_count'] = 0;
 
-    //execute the function batch function.
+    //execute the function named batch_example_1 or batch_example_2.
     $batch = $function($form_state['values']);
     batch_set($batch);
   }
