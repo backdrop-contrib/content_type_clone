@@ -118,10 +118,8 @@ function content_type_clone_create(array $values) {
  *
  * @param bool $success
  *   The batch status.
- *
  * @param array $results
  *   The batch results array.
- *
  * @param array $operations
  *   The batch operations array.
  */
@@ -164,10 +162,8 @@ function content_type_clone_finished($success, array $results, array $operations
  *
  * @param object $source_node
  *   The node to clone.
- *
  * @param array $values
  *   Values from the content type clone form.
- *
  * @param array $context
  *   The batch operations context.
  */
@@ -222,10 +218,8 @@ function content_type_clone_copy_node($source_node, array $values, array &$conte
  *
  * @param object $instance
  *   The newly created content type.
- *
  * @param string $field_name
  *   The name of the field in the source content type.
- *
  * @param array $values
  *   Form values coming from the content type creation form.
  */
@@ -477,7 +471,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
     '#default_value' => $node_type->description,
     '#attributes' => array(
       'readonly' => 'readonly',
-      'class' => array('ctc-readonly')
+      'class' => array('ctc-readonly'),
     ),
   );
 
@@ -606,3 +600,4 @@ function content_type_clone_create_form_submit($form, &$form_state) {
     batch_set($batch);
   }
 }
+
