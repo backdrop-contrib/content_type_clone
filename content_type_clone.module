@@ -117,7 +117,7 @@ function content_type_clone_create($values) {
  */
 function content_type_clone_finished($success, $results, $operations) {
 
-  //test the results
+  // Test the results
   if ($success) {
     drupal_set_message(t('The "@source_name" content type and @field_count fields have been cloned successfully.', array('@source_name' => $results['source_name'], '@field_count' => $results['field_count'])));
   }
@@ -490,7 +490,7 @@ function content_type_clone_create_form_submit($form, &$form_state) {
     //reset counter for debug information.
     $_SESSION['http_request_count'] = 0;
 
-    //execute the function named batch_example_1 or batch_example_2.
+    //execute the function batch function.
     $batch = $function($form_state['values']);
     batch_set($batch);
   }
