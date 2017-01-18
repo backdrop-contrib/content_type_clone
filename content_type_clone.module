@@ -42,13 +42,13 @@ function content_type_clone_get_next_type_number($node_type_prefix) {
 function content_type_clone_create(array $values) {
   // Create the type definition array.
   $type = array(
-  'type' => $values['target_machine_name'],
-  'name' => $values['target_name'],
-  'base' => 'node_content',
-  'description' => $values['target_description'],
-  'custom' => 1,
-  'modified' => 1,
-  'locked' => 0,
+    'type' => $values['target_machine_name'],
+    'name' => $values['target_name'],
+    'base' => 'node_content',
+    'description' => $values['target_description'],
+    'custom' => 1,
+    'modified' => 1,
+    'locked' => 0,
   );
 
   // Set the type defaults.
@@ -100,12 +100,12 @@ function content_type_clone_create(array $values) {
 
   // Define batch operation.
   $batch = array(
-  'title' => t('Clone content type'),
-  'operations' => $operations,
-  'finished' => 'content_type_clone_finished',
-  'init_message' => t('Operation in progress...'),
-  'progress_message' => t('Task @current/@total'),
-  'error_message' => t('An error has occurred please try again.'),
+    'title' => t('Clone content type'),
+    'operations' => $operations,
+    'finished' => 'content_type_clone_finished',
+    'init_message' => t('Operation in progress...'),
+    'progress_message' => t('Task @current/@total'),
+    'error_message' => t('An error has occurred please try again.'),
   );
 
   return $batch;
@@ -346,18 +346,18 @@ function content_type_clone_preprocess_html(&$variables) {
 function content_type_clone_menu() {
   // Content type clone form url.
   $items['admin/%/clone/create'] = array(
-  'title' => '',
-  'access arguments' => array('administer content types'),
-  'page callback' => 'drupal_get_form',
-  'page arguments' => array('content_type_clone_create_form', 1),
-  'type' => MENU_CALLBACK
+    'title' => '',
+    'access arguments' => array('administer content types'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('content_type_clone_create_form', 1),
+    'type' => MENU_CALLBACK
   );
 
   $items['admin/structure/types/manage/%node_type/clone'] = array(
-  'title' => 'Clone',
-  'access arguments' => array('administer content types'),
-  'page callback' => 'content_type_clone_menu_redirect',
-  'page arguments' => array(4)
+    'title' => 'Clone',
+    'access arguments' => array('administer content types'),
+    'page callback' => 'content_type_clone_menu_redirect',
+    'page arguments' => array(4)
   );
 
   return $items;
@@ -385,87 +385,87 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
 
   // Source fieldset.
   $form['fieldset_1'] = array(
-  '#type' => 'fieldset',
-  '#title' => t('Content type source'),
-  '#collapsible' => TRUE,
-  '#collapsed' => TRUE,
+    '#type' => 'fieldset',
+    '#title' => t('Content type source'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
   );
 
   // Source node type name field.
   $form['fieldset_1']['source_name'] = array(
-  '#type' => 'textfield',
-  '#title' => t('Name'),
-  '#default_value' => $node_type->name,
-  '#required' => TRUE,
-  '#attributes' => array('readonly' => 'readonly', 'class' => array('ctc-readonly'))
+    '#type' => 'textfield',
+    '#title' => t('Name'),
+    '#default_value' => $node_type->name,
+    '#required' => TRUE,
+    '#attributes' => array('readonly' => 'readonly', 'class' => array('ctc-readonly'))
   );
 
   // Source node type machine name field.
   $form['fieldset_1']['source_machine_name'] = array(
-  '#type' => 'textfield',
-  '#title' => t('Machine name'),
-  '#default_value' => $node_type->type,
-  '#required' => TRUE,
-  '#attributes' => array('readonly' => 'readonly', 'class' => array('ctc-readonly'))
+    '#type' => 'textfield',
+    '#title' => t('Machine name'),
+    '#default_value' => $node_type->type,
+    '#required' => TRUE,
+    '#attributes' => array('readonly' => 'readonly', 'class' => array('ctc-readonly'))
   );
 
   // Source node type description field.
   $form['fieldset_1']['source_description'] = array(
-  '#type' => 'textarea',
-  '#title' => t('Description'),
-  '#default_value' => $node_type->description,
-  '#attributes' => array('readonly' => 'readonly', 'class' => array('ctc-readonly'))
+    '#type' => 'textarea',
+    '#title' => t('Description'),
+    '#default_value' => $node_type->description,
+    '#attributes' => array('readonly' => 'readonly', 'class' => array('ctc-readonly'))
   );
 
   // Target fieldset.
   $form['fieldset_2'] = array(
-  '#type' => 'fieldset',
-  '#title' => t('Content type target'),
-  '#collapsible' => FALSE,
-  '#collapsed' => FALSE
+    '#type' => 'fieldset',
+    '#title' => t('Content type target'),
+    '#collapsible' => FALSE,
+    '#collapsed' => FALSE
   );
 
   // Target node type name field.
   $default_value = 'Clone of' . ' ' . $node_type->name . ' (' . $num . ')';
   $form['fieldset_2']['target_name'] = array(
-  '#type' => 'textfield',
-  '#title' => t('Name'),
-  '#default_value' => t($default_value),
-  '#token' => FALSE,
-  '#required' => TRUE
+    '#type' => 'textfield',
+    '#title' => t('Name'),
+    '#default_value' => t($default_value),
+    '#token' => FALSE,
+    '#required' => TRUE
   );
 
   // Target type machine name field.
   $form['fieldset_2']['target_machine_name'] = array(
-  '#type' => 'textfield',
-  '#title' => t('Machine name'),
-  '#default_value' => t($node_type_prefix . '_' . $num),
-  '#required' => TRUE
+    '#type' => 'textfield',
+    '#title' => t('Machine name'),
+    '#default_value' => t($node_type_prefix . '_' . $num),
+    '#required' => TRUE
   );
 
   // Source node type description field.
   $form['fieldset_2']['target_description'] = array(
-  '#type' => 'textarea',
-  '#title' => t('Description'),
-  '#default_value' => t('Description of') . ' ' . $node_type->name . ' (' . $num . ')'
+    '#type' => 'textarea',
+    '#title' => t('Description'),
+    '#default_value' => t('Description of') . ' ' . $node_type->name . ' (' . $num . ')'
   );
 
   $form['fieldset_2']['clone_source_nodes'] = array(
-  '#type' => 'checkbox',
-  '#title' => t('Copy all nodes from the source content type to the target content type')
+    '#type' => 'checkbox',
+    '#title' => t('Copy all nodes from the source content type to the target content type')
   );
 
   $form['fieldset_2']['delete_source_nodes'] = array(
-  '#type' => 'checkbox',
-  '#title' => t('Delete all nodes from the source content type after they have been copied to the target content type')
+    '#type' => 'checkbox',
+    '#title' => t('Delete all nodes from the source content type after they have been copied to the target content type')
   );
 
   // Token fieldset.
   $form['fieldset_3'] = array(
-  '#type' => 'fieldset',
-  '#title' => t('Replacement patterns'),
-  '#collapsible' => TRUE,
-  '#collapsed' => TRUE
+    '#type' => 'fieldset',
+    '#title' => t('Replacement patterns'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE
   );
 
   // Token fields.
@@ -473,31 +473,31 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
     //display the node title pattern field
     $default_value = t('Clone of') . ' ' . '[node:title]';
     $form['fieldset_3']['title_pattern'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Node title pattern'),
-    '#default_value' => $default_value,
-    '#token' => FALSE,
-    '#required' => TRUE
+      '#type' => 'textfield',
+      '#title' => t('Node title pattern'),
+      '#default_value' => $default_value,
+      '#token' => FALSE,
+      '#required' => TRUE
     );
 
     // List available tokens.
     $form['fieldset_3']['token_tree_link'] = array(
-    '#theme' => 'token_tree',
-    '#token_types' => array('node'),
-    '#global_types' => TRUE,
-    '#click_insert' => TRUE
+      '#theme' => 'token_tree',
+      '#token_types' => array('node'),
+      '#global_types' => TRUE,
+      '#click_insert' => TRUE
     );
   }
   else {
     $form['fieldset_3']['token_tree'] = array(
-    '#markup' => '<p>' . t('Enable the <a href="@drupal-token">Token module</a> to view the available token browser.', array('@drupal-token' => 'http://drupal.org/project/token')) . '</p>',
+      '#markup' => '<p>' . t('Enable the <a href="@drupal-token">Token module</a> to view the available token browser.', array('@drupal-token' => 'http://drupal.org/project/token')) . '</p>',
     );
   }
 
   // Submit button.
   $form['submit'] = array(
-  '#type' => 'submit',
-  '#value' => t('Generate')
+    '#type' => 'submit',
+    '#value' => t('Generate')
   );
 
   // Return the form.
