@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Content Type Clone cloning functions.
+ */
+
+/**
  * Form constructor for the clone creation.
  *
  * @param array $form
@@ -10,7 +15,7 @@
  * @param string $machine_name
  *   The machine name of the source content type.
  */
-function content_type_clone_create_form($form, &$form_state, $machine_name) {
+function content_type_clone_create_form(array $form, array &$form_state, $machine_name) {
   // Load the node type from machine name.
   $node_type = node_type_load($machine_name);
 
@@ -102,13 +107,13 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
     ),
   );
 
-  // Clone parameters fieldset
+  // Clone parameters fieldset.
   $form['fieldset_2']['clone_source_nodes'] = array(
     '#type' => 'checkbox',
     '#title' => t('Copy all nodes from the source content type to the target content type'),
   );
 
-  // Delete parameters fieldset
+  // Delete parameters fieldset.
   $form['fieldset_2']['delete_source_nodes'] = array(
     '#type' => 'checkbox',
     '#title' => t('Delete all nodes from the source content type after they have been copied to the target content type'),
@@ -158,7 +163,7 @@ function content_type_clone_create_form($form, &$form_state, $machine_name) {
     '#value' => t('Generate'),
   );
   
-  // Attach the admin css file
+  // Attach the admin css file.
   $form['#attached']['css'] = array(
   	drupal_get_path('module', 'content_type_clone') . '/css/admin.css',
   );
@@ -201,7 +206,7 @@ function content_type_clone_get_next_type_number($node_type_prefix) {
  * @param array $form_state
  *   Reference to the form state array.
  */
-function content_type_clone_create_form_validate($form, &$form_state) {
+function content_type_clone_create_form_validate(array $form, array &$form_state) {
   if ($form['#form_id'] == 'content_type_clone_create_form') {
     // Get node types.
     $node_types = array_keys(node_type_get_types());
@@ -217,9 +222,14 @@ function content_type_clone_create_form_validate($form, &$form_state) {
 }
 
 /**
- * Implements hook_form_submit().
+ * Form submit handler for the clone creation form.
+ *
+ * @param array $form
+ *   The form array.
+ * @param array $form_state
+ *   Reference to the form state array.
  */
-function content_type_clone_create_form_submit($form, &$form_state) {
+function content_type_clone_create_form_submit(array $form, array &$form_state) {
   if ($form['#form_id'] == 'content_type_clone_create_form') {
     // Reset counter for debug information.
     $_SESSION['http_request_count'] = 0;
@@ -375,13 +385,13 @@ function _content_type_clone_update_http_requests() {
  *   The content type.
  */
 function content_type_clone_get_type_nids($type) {
-  // Get all nids for the content type
+  // Get all nids for the content type.
   $nids = db_query('SELECT nid FROM {node} WHERE type =  :type', 
   array(
     ':type' => $type,
   ))->fetchCol();
   
-  // Return the results
+  // Return the results.
   return $nids;
 }
 
@@ -399,7 +409,7 @@ function content_type_clone_get_type_nids($type) {
  *   The batch operations context.
  */
 function content_type_clone_copy_node($node_id, array $values, array &$context) {
-  // Load the node by id
+  // Load the node by id.
   $source_node = node_load($node_id);
   
   // Progress context results.
