@@ -162,10 +162,10 @@ function content_type_clone_create_form(array $form, array &$form_state, $machin
     '#type' => 'submit',
     '#value' => t('Generate'),
   );
-  
+
   // Attach the admin css file.
   $form['#attached']['css'] = array(
-  	drupal_get_path('module', 'content_type_clone') . '/css/admin.css',
+    drupal_get_path('module', 'content_type_clone') . '/css/admin.css',
   );
 
   // Return the form.
@@ -386,11 +386,11 @@ function _content_type_clone_update_http_requests() {
  */
 function content_type_clone_get_type_nids($type) {
   // Get all nids for the content type.
-  $nids = db_query('SELECT nid FROM {node} WHERE type =  :type', 
+  $nids = db_query('SELECT nid FROM {node} WHERE type =  :type',
   array(
     ':type' => $type,
   ))->fetchCol();
-  
+
   // Return the results.
   return $nids;
 }
@@ -411,7 +411,7 @@ function content_type_clone_get_type_nids($type) {
 function content_type_clone_copy_node($node_id, array $values, array &$context) {
   // Load the node by id.
   $source_node = node_load($node_id);
-  
+
   // Progress context results.
   $context['results'][] = 'nid' . $source_node->nid;
 

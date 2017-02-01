@@ -4,7 +4,7 @@
  * @file
  * Content Type Clone utility functions.
  */
- 
+
 /**
  * Redirect to the content type clone form.
  *
