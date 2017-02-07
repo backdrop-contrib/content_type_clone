@@ -132,4 +132,3 @@ function content_type_clone_menu() {
 function content_type_clone_menu_alter(&$items) {
   $items['admin/structure/types']['page callback'] = 'content_type_clone_node_overview_types';
 }
-
