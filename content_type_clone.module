@@ -102,16 +102,6 @@ function content_type_clone_node_overview_types() {
 }
 
 /**
- * Implements hook_preprocess_html().
- */
-function content_type_clone_preprocess_html(&$variables) {
-  // Add css if required.
-  if (arg(0) == 'admin' && arg(2) == 'clone' && arg(3) == 'create') {
-    drupal_add_css(drupal_get_path('module', 'content_type_clone') . '/css/admin.css', array('group' => CSS_THEME, 'type' => 'file'));
-  }
-}
-
-/**
  * Implements hook_menu().
  */
 function content_type_clone_menu() {
@@ -142,3 +132,4 @@ function content_type_clone_menu() {
 function content_type_clone_menu_alter(&$items) {
   $items['admin/structure/types']['page callback'] = 'content_type_clone_node_overview_types';
 }
+
