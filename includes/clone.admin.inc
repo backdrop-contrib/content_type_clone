@@ -509,4 +509,3 @@ function content_type_clone_finished($success, array $results, array $operations
   // Redirect to the content types list.
   drupal_goto('/admin/structure/types');
 }
-
