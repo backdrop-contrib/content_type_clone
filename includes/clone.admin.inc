@@ -308,6 +308,7 @@ function content_type_clone_create(array $values) {
   $batch = array(
     'title' => t('Clone content type'),
     'operations' => $operations,
+    'file' => drupal_get_path('module', 'content_type_clone') . '/includes/clone.admin.inc',
     'finished' => 'content_type_clone_finished',
     'init_message' => t('Operation in progress...'),
     'progress_message' => t('Task @current/@total'),
@@ -330,9 +331,6 @@ function content_type_clone_create(array $values) {
  *   Form values coming from the content type creation form.
  */
 function content_type_clone_set_target_field($instance, $field_name, array $values, array &$context) {
-  // Slow down the progress for visibility.
-  sleep(0.5);
-
   // Progress context results.
   $context['results'][] = $field_name;
 
@@ -511,3 +509,4 @@ function content_type_clone_finished($success, array $results, array $operations
   // Redirect to the content types list.
   drupal_goto('/admin/structure/types');
 }
+
