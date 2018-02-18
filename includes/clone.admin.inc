@@ -283,10 +283,12 @@ function content_type_clone_create(array $values) {
 
   // Create new fields.
   foreach ($all_fields as $name => $instance) {
-    $operations[] = array(
-      'content_type_clone_set_target_field',
-      array($instance, $name, $values),
-    );
+    if (isset($name) && !empty($name)){
+      $operations[] = array(
+        'content_type_clone_set_target_field',
+        array($instance, $name, $values),
+      );
+    }
   }
 
   // Also clone the nodes if requested.
