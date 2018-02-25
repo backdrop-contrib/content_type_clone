@@ -351,11 +351,12 @@ function content_type_clone_set_target_field($instance, $field_name, array $valu
   );
 
   // Verify the field does not already exist.
-  if ($field_name != 'body' && $field_name != 'title') {
+  if (!_content_type_clone_exclude_field($field_name)) {
     // If field doesn't exist, create it.
     if (!field_info_field($field_name)) {
-      $field = field_info_field($field_name);
-      $field = field_create_field($field);
+      if ($field = field_info_field($field_name)) {
+        $field = field_create_field($field);
+      }
     }
 
     // Set the new bundle name.
@@ -368,6 +369,19 @@ function content_type_clone_set_target_field($instance, $field_name, array $valu
 
   // Update progress.
   _content_type_clone_update_http_requests();
+}
+
+/**
+ * Checks if a field should be excluded.
+ *
+ * @param string $field_name
+ *   The field name.
+ * @return bool
+ *   Number of requests. 
+ */
+function _content_type_clone_exclude_field($field_name) {
+  $exclude = array('title', 'body', 'metatags', 'locations');
+  return in_array($field_name, $exclude);
 }
 
 /**
