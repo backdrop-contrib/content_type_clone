@@ -15,5 +15,5 @@
  */
 function content_type_clone_menu_redirect($node_type) {
   // Redirect the user.
-  drupal_goto('admin/' . $node_type->type . '/clone/create');
+  backdrop_goto('admin/' . $node_type->type . '/clone/create');
 }

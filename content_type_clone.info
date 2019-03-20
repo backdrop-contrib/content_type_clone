@@ -1,5 +1,6 @@
 name = Content Type Clone
-description = Allows to clone content types from a simple link added to each content type in the content type list.
-core = "7.x"
+description = Allows cloning of content types via a simple link in the content type list.
+backdrop = 1.x
+type = module
 dependencies[] = node
 dependencies[] = field

@@ -101,9 +101,9 @@ function content_type_clone_create_form(array $form, array &$form_state, $machin
     '#default_value' => t(
       'Description of @name (@num)',
       array(
-        '@name' => $node_type->name,
-        '@num' => $num,
-      )
+      '@name' => $node_type->name,
+      '@num' => $num,
+    )
     ),
   );
 
@@ -149,10 +149,10 @@ function content_type_clone_create_form(array $form, array &$form_state, $machin
   }
   else {
     $form['fieldset_3']['token_tree'] = array(
-      '#markup' => '<p>' . t('Enable the <a href="@drupal-token">Token module</a> to view the available token browser.',
+      '#markup' => '<p>' . t('Enable the <a href="@backdrop-token">Token module</a> to view the available token browser.',
         array(
-          '@drupal-token' => 'http://drupal.org/project/token',
-        )
+        '@backdrop-token' => 'http://drupal.org/project/token',
+      )
       ) . '</p>',
     );
   }
@@ -165,7 +165,7 @@ function content_type_clone_create_form(array $form, array &$form_state, $machin
 
   // Attach the admin css file.
   $form['#attached']['css'] = array(
-    drupal_get_path('module', 'content_type_clone') . '/css/admin.css',
+    backdrop_get_path('module', 'content_type_clone') . '/css/admin.css',
   );
 
   // Return the form.
@@ -283,7 +283,7 @@ function content_type_clone_create(array $values) {
 
   // Create new fields.
   foreach ($all_fields as $name => $instance) {
-    if (isset($name) && !empty($name)){
+    if (isset($name) && !empty($name)) {
       $operations[] = array(
         'content_type_clone_set_target_field',
         array($instance, $name, $values),
@@ -310,7 +310,7 @@ function content_type_clone_create(array $values) {
   $batch = array(
     'title' => t('Clone content type'),
     'operations' => $operations,
-    'file' => drupal_get_path('module', 'content_type_clone') . '/includes/clone.admin.inc',
+    'file' => backdrop_get_path('module', 'content_type_clone') . '/includes/clone.admin.inc',
     'finished' => 'content_type_clone_finished',
     'init_message' => t('Operation in progress...'),
     'progress_message' => t('Task @current/@total'),
@@ -340,14 +340,16 @@ function content_type_clone_set_target_field($instance, $field_name, array $valu
   $context['results']['source_name'] = $values['source_name'];
 
   // Update the field count.
-  if (!isset($context['results']['field_count'])) $context['results']['field_count'] = 0;
+  if (!isset($context['results']['field_count'])) {
+    $context['results']['field_count'] = 0;
+  }
   $context['results']['field_count']++;
 
   // Progress context message.
   $context['message'] = t('Cloning field @field',
     array(
-      '@field' => $field_name,
-    )
+    '@field' => $field_name,
+  )
   );
 
   // Verify the field does not already exist.
@@ -377,7 +379,7 @@ function content_type_clone_set_target_field($instance, $field_name, array $valu
  * @param string $field_name
  *   The field name.
  * @return bool
- *   Number of requests. 
+ *   Number of requests.
  */
 function _content_type_clone_exclude_field($field_name) {
   $exclude = array('title', 'body', 'metatags', 'locations');
@@ -436,8 +438,8 @@ function content_type_clone_copy_node($node_id, array $values, array &$context) 
   // Progress context message.
   $context['message'] = t('Cloning node @title',
     array(
-      '@title' => $source_node->title,
-    )
+    '@title' => $source_node->title,
+  )
   );
 
   // Copy the source node.
@@ -458,8 +460,8 @@ function content_type_clone_copy_node($node_id, array $values, array &$context) 
   else {
     $target_node->title = t('Clone of @title',
       array(
-        '@title' => $source_node->title,
-      )
+      '@title' => $source_node->title,
+    )
     );
   }
 
@@ -500,29 +502,29 @@ function _content_type_clone_get_http_requests() {
 function content_type_clone_finished($success, array $results, array $operations) {
   // Test the results.
   if ($success) {
-    drupal_set_message(
+    backdrop_set_message(
       t(
         'The "@source_name" content type and @field_count fields have been cloned successfully.',
         array(
-          '@source_name' => $results['source_name'],
-          '@field_count' => $results['field_count'],
-        )
+      '@source_name' => $results['source_name'],
+      '@field_count' => $results['field_count'],
+    )
       )
     );
   }
   else {
     $error_operation = reset($operations);
-    drupal_set_message(
+    backdrop_set_message(
       t(
         'An error occurred while processing @operation with arguments : @args',
         array(
-          '@operation' => $error_operation[0],
-          '@args' => print_r($error_operation[0], TRUE),
-        )
+      '@operation' => $error_operation[0],
+      '@args' => print_r($error_operation[0], TRUE),
+    )
       )
     );
   }
 
   // Redirect to the content types list.
-  drupal_goto('/admin/structure/types');
+  backdrop_goto('/admin/structure/types');
 }

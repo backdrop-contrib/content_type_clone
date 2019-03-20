@@ -11,91 +11,61 @@
 function content_type_clone_node_overview_types() {
   $types = node_type_get_types();
   $names = node_type_get_names();
-  $field_ui = module_exists('field_ui');
-  $header = array(
-    t('Name'),
-    array(
-      'data' => t('Operations'),
-      'colspan' => $field_ui ? '5' : '3',
-    ),
-  );
+  $field_ui = module_exists('field_ui') && user_access('administer fields');
+  $header = array(t('Name'), t('Operations'));
   $rows = array();
+
+  // Sort the list of content types by label instead of machine name.
+  natcasesort($names);
 
   foreach ($names as $key => $name) {
     $type = $types[$key];
-    if (node_hook($type->type, 'form')) {
-      $type_url_str = str_replace('_', '-', $type->type);
-      $row = array(
-        theme(
-          'node_admin_overview',
-          array(
-            'name' => $name,
-            'type' => $type,
-          )
-        ),
+    $type_url_str = str_replace('_', '-', $type->type);
+    $row = array(theme('node_admin_overview', array('name' => $name, 'type' => $type)));
+    $links['configure'] = array(
+      'title' => t('Configure'),
+      'href' => 'admin/structure/types/manage/' . $type_url_str,
+      'weight' => 0,
+    );
+    if ($field_ui) {
+      $links['fields'] = array(
+        'title' => t('Manage fields'),
+        'href' => 'admin/structure/types/manage/' . $type_url_str . '/fields',
+        'weight' => 5,
       );
-
-      // Set the edit column.
-      $row[] = array(
-        'data' => l(
-          t('edit'),
-          'admin/structure/types/manage/' . $type_url_str
-        ),
+      $links['display'] = array(
+        'title' => t('Manage displays'),
+        'href' => 'admin/structure/types/manage/' . $type_url_str . '/display',
+        'weight' => 10,
       );
-
-      if ($field_ui) {
-        // Manage fields.
-        $row[] = array(
-          'data' => l(
-            t('manage fields'),
-            'admin/structure/types/manage/' . $type_url_str . '/fields'
-          ),
-        );
-
-        // Display fields.
-        $row[] = array(
-          'data' => l(
-            t('manage display'),
-            'admin/structure/types/manage/' . $type_url_str . '/display'
-          ),
-        );
-      }
-
-      // Set the delete column.
-      if ($type->custom) {
-        $row[] = array(
-          'data' => l(
-            t('delete'),
-            'admin/structure/types/manage/' . $type_url_str . '/delete'
-          ),
-        );
-      }
-      else {
-        $row[] = array('data' => '');
-      }
-
-      // Set the clone column.
-      $row[] = array(
-        'data' => l(
-          t('clone'),
-          'admin/' . $type_url_str . '/clone/create'
-        ),
-      );
-
-      $rows[] = $row;
     }
+    if ($type->module === 'node') {
+      $links['delete'] = array(
+        'title' => t('Delete'),
+        'href' => 'admin/structure/types/manage/' . $type_url_str . '/delete',
+        'weight' => 15,
+      );
+    }
+    $links['clone'] = array(
+      'title' => t('Clone'),
+      'href' => 'admin/' . $type_url_str . '/clone/create',
+      'weight' => 20,
+    );
+    $row[] = array(
+      'data' => array(
+        '#type' => 'operations',
+        '#links' => $links,
+      ),
+    );
+
+    $rows[] = $row;
   }
 
   $build['node_table'] = array(
     '#theme' => 'table',
     '#header' => $header,
     '#rows' => $rows,
-    '#empty' => t(
-      'No content types available. <a href="@link">Add content type</a>.',
-      array(
-        '@link' => url('admin/structure/types/add'),
-      )
-    ),
+    '#empty' => t('No content types available. <a href="@link">Add content type</a>.', array('@link' => url('admin/structure/types/add'))),
   );
 
   return $build;
@@ -109,7 +79,7 @@ function content_type_clone_menu() {
   $items['admin/%/clone/create'] = array(
     'title' => '',
     'access arguments' => array('administer content types'),
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('content_type_clone_create_form', 1),
     'file' => 'includes/clone.admin.inc',
     'type' => MENU_CALLBACK,
