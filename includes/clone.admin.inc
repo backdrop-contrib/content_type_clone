@@ -128,34 +128,23 @@ function content_type_clone_create_form(array $form, array &$form_state, $machin
   );
 
   // Token fields.
-  if (module_exists('token')) {
-    // Display the node title pattern field.
-    $default_value = t('Clone of @title', array('@title' => '[node:title]'));
-    $form['fieldset_3']['title_pattern'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Node title pattern'),
-      '#default_value' => $default_value,
-      '#token' => FALSE,
-      '#required' => TRUE,
-    );
+  // Display the node title pattern field.
+  $default_value = t('Clone of @title', array('@title' => '[node:title]'));
+  $form['fieldset_3']['title_pattern'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Node title pattern'),
+    '#default_value' => $default_value,
+    '#token' => FALSE,
+    '#required' => TRUE,
+  );
 
-    // List available tokens.
-    $form['fieldset_3']['token_tree_link'] = array(
-      '#theme' => 'token_tree',
-      '#token_types' => array('node'),
-      '#global_types' => TRUE,
-      '#click_insert' => TRUE,
-    );
-  }
-  else {
-    $form['fieldset_3']['token_tree'] = array(
-      '#markup' => '<p>' . t('Enable the <a href="@backdrop-token">Token module</a> to view the available token browser.',
-        array(
-        '@backdrop-token' => 'http://drupal.org/project/token',
-      )
-      ) . '</p>',
-    );
-  }
+  // List available tokens.
+  $form['fieldset_3']['token_tree_link'] = array(
+    '#theme' => 'token_tree',
+    '#token_types' => array('node'),
+    '#global_types' => TRUE,
+    '#click_insert' => TRUE,
+  );
 
   // Submit button.
   $form['submit'] = array(
@@ -433,7 +422,7 @@ function content_type_clone_copy_node($node_id, array $values, array &$context) 
   $context['results'][] = 'nid' . $source_node->nid;
 
   // Update the node count.
-  $context['results']['node_count']++;
+  (isset($context['results']['node_count'])) ? $context['results']['node_count']++ : $context['results']['node_count'] = 1;
 
   // Progress context message.
   $context['message'] = t('Cloning node @title',
@@ -447,23 +436,16 @@ function content_type_clone_copy_node($node_id, array $values, array &$context) 
 
   // Unset version and node id's.
   unset($target_node->nid);
-  unset($target_node->vid);
+  if (isset($target_node->vid)) {
+    unset($target_node->vid);
+  }
   unset($target_node->path);
 
   // Set target node type.
   $target_node->type = $values['target_machine_name'];
 
   // Set the target node title.
-  if (module_exists('token')) {
-    $target_node->title = token_replace($values['title_pattern'], array('node' => $target_node));
-  }
-  else {
-    $target_node->title = t('Clone of @title',
-      array(
-      '@title' => $source_node->title,
-    )
-    );
-  }
+  $target_node->title = token_replace($values['title_pattern'], array('node' => $target_node));
 
   // Save the copy.
   node_save($target_node);

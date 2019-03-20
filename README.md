@@ -1,73 +1,35 @@
-CONTENTS OF THIS FILE
----------------------
-   
- * Introduction
- * Requirements
- * Recommended modules
- * Installation
- * Configuration
- * Troubleshooting
- * FAQ
- * Maintainers
- 
- 
-INTRODUCTION
-------------
+# ![Content Type Clone](https://github.com/backdrop-contrib/content_type_clone/blob/1.x-1.x/images/content_type_clone.png "Content Type Clone")
 
-Content Type Clone alows users with the "Administer content types" permission 
+Content Type Clone allows users with the "Administer content types" permission 
 to clone content types in one click.
-   
-   
-REQUIREMENTS
-------------
 
-No special requirements
+## Installation
 
- 
-RECOMMENDED MODULES
--------------------
+- Install this module using the [official Backdrop CMS instructions](https://backdropcms.org/guide/modules).
 
- * Token (https://www.drupal.org/project/token):
-   When enabled, tokens are available for name, the machine name
-   and the description when cloning existing content types.
-   
-   
-INSTALLATION
-------------
- 
- * Install as you would normally install a contributed Drupal module. See:
-   https://drupal.org/documentation/install/modules-themes/modules-7
-   for further information.
-   
-
-CONFIGURATION
--------------
+## Configuration and Usage
 
 The module has no menu or modifiable settings. There is no configuration. When
-enabled, the module will add a "clone" link to each existing content type in 
-the content type list (admin/structure/types).
+enabled, the module will add a "clone" option to the operations droplist for 
+each existing content type in the content type list (**admin/structure/types**).
+
+More details may be found (or added) in the [Wiki](https://github.com/backdrop-contrib/content_type_clone/issues)
+
+## Issues
+
+Bugs and Feature requests should be reported in the [Issue Queue](https://github.com/backdrop-contrib/content_type_clone/issues)
+
+## Current Maintainers
+
+- [Laryn Kragt Bakker](https://github.com/laryn), [CEDC.org](https://CEDC.org) 
+
+## Credits
+
+- Ported to Backdrop by [Laryn Kragt Bakker](https://github.com/laryn), [CEDC.org](https://CEDC.org)
+- Maintained for Drupal by [David Fiaty](https://www.drupal.org/u/david-fiaty)
 
 
-HOW TO USE
-----------
-After having installed and enabled the module, follow the steps below:
+## License
 
- 1. Go to the content type list (admin/structure/types).
-  
- 2. Click on the "clone" list next to the content type you want to clone.
-  
- 3. In the form that will appear, provide a name, a machine name and 
-    a description (optional) for the new content type 
-    that is about to be created.
-   
- 4. Click "Generate". The cloned content type will then appear 
-    in the content type list.
-
-Cloning options:
-When cloning a content type, there are 2 self explanatory options 
-in the creation form.
-
- * Copy all nodes from the source content type to the target content type
- 	
- * Delete all nodes from the source content type after 
-   they have been copied to the target content type
+This project is GPL v2 software. See the LICENSE.txt file in this directory for
+complete text.
