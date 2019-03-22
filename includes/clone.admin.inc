@@ -272,7 +272,7 @@ function content_type_clone_create(array $values) {
 
   // Create new fields.
   foreach ($all_fields as $name => $instance) {
-    if (isset($name) && !empty($name)) {
+    if (isset($name) && !empty($name) && isset($instance['entity_type']) && !empty($instance['entity_type'])) {
       $operations[] = array(
         'content_type_clone_set_target_field',
         array($instance, $name, $values),
