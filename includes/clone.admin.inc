@@ -280,6 +280,15 @@ function content_type_clone_create(array $values) {
     }
   }
 
+  // Create new groups.
+  if (module_exists('field_group')) {
+    $groups = field_group_info_groups('node', $values['source_machine_name'], NULL, TRUE);
+    foreach ($groups['form'] as $group) {
+      $group->bundle = $values['target_machine_name'];
+      field_group_group_save($group, $new = TRUE);
+    }
+  }
+
   // Also clone the nodes if requested.
   if ((int) $values['clone_source_nodes'] == 1) {
     // Load all nodes for the source content type.
