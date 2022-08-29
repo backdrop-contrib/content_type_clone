@@ -157,7 +157,8 @@ function content_type_clone_create_form(array $form, array &$form_state, $machin
   );
 
   // Submit button.
-  $form['submit'] = array(
+  $form['actions']['#type'] = 'actions';
+  $form['actions']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Generate'),
   );
