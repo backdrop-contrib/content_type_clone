@@ -117,6 +117,11 @@ function content_type_clone_create_form(array $form, array &$form_state, $machin
   $form['fieldset_2']['delete_source_nodes'] = array(
     '#type' => 'checkbox',
     '#title' => t('Delete all nodes from the source content type after they have been copied to the target content type'),
+    '#states' => array(
+      'visible' => array(
+        ':input[name="clone_source_nodes"]' => array('checked' => TRUE),
+      ),
+    ),
   );
 
   // Token fieldset.
@@ -124,7 +129,12 @@ function content_type_clone_create_form(array $form, array &$form_state, $machin
     '#type' => 'fieldset',
     '#title' => t('Replacement patterns'),
     '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
+    '#collapsed' => FALSE,
+    '#states' => array(
+      'visible' => array(
+        ':input[name="clone_source_nodes"]' => array('checked' => TRUE),
+      ),
+    ),
   );
 
   // Token fields.
