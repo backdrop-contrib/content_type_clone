@@ -451,13 +451,8 @@ function content_type_clone_copy_node($node_id, array $values, array &$context) 
   );
 
   // Copy the source node.
-  $target_node = clone $source_node;
+  $target_node = $source_node->createDuplicate();
 
-  // Unset version and node id's.
-  unset($target_node->nid);
-  if (isset($target_node->vid)) {
-    unset($target_node->vid);
-  }
   unset($target_node->path);
 
   // Set target node type.
