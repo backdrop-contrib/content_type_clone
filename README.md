@@ -1,6 +1,6 @@
 # ![Content Type Clone](https://github.com/backdrop-contrib/content_type_clone/blob/1.x-1.x/images/content_type_clone.png "Content Type Clone")
 
-Content Type Clone allows users with the "Administer content types" permission 
+Content Type Clone allows users with the "Administer content types" permission
 to clone content types in one click.
 
 ## Installation
@@ -10,7 +10,7 @@ to clone content types in one click.
 ## Configuration and Usage
 
 The module has no menu or modifiable settings. There is no configuration. When
-enabled, the module will add a "clone" option to the operations droplist for 
+enabled, the module will add a "clone" option to the operations droplist for
 each existing content type in the content type list (**admin/structure/types**).
 
 More details may be found (or added) in the [Wiki](https://github.com/backdrop-contrib/content_type_clone/issues)
@@ -21,13 +21,13 @@ Bugs and Feature requests should be reported in the [Issue Queue](https://github
 
 ## Current Maintainers
 
-- [Laryn Kragt Bakker](https://github.com/laryn), [CEDC.org](https://CEDC.org) 
+- [Laryn Kragt Bakker](https://github.com/laryn)
 
 ## Credits
 
-- Ported to Backdrop by [Laryn Kragt Bakker](https://github.com/laryn), [CEDC.org](https://CEDC.org)
+- Ported to Backdrop by [Laryn Kragt Bakker](https://github.com/laryn)
+- Backdrop port was initially sponsored by [CEDC.org](https://CEDC.org)
 - Maintained for Drupal by [David Fiaty](https://www.drupal.org/u/david-fiaty)
-
 
 ## License
 
