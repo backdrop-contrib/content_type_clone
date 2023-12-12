@@ -1,5 +1,5 @@
-.ctc-readonly {
-  background-color: #f1f1f1 !important;
+.form-item .ctc-readonly {
+  background-color: #f1f1f1;
 }
 
 .token-tree {
